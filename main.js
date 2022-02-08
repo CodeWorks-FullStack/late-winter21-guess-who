@@ -5,19 +5,18 @@ let villians = [{ name: "Lord Voldemort", facialHair: false, gender: "M", overFi
 ]
 //#endregion
 
-let cats = [{ name: 'Mittens' }, { name: 'Snowball' }, { name: 'Mr. Snibbley' }]
+let current = []
 
-function draw(arr) {
-  debugger
+function draw() {
   let template = ""
-  for (let i = 0; i < arr.length; i++) {
-    const character = arr[i]
-    template += `
+  for (let i = 0; i < current.length; i++) {
+    const character = current[i]
+    template += /* html*/`
     <div class="col-12 col-sm-6 col-md-4 p-3">
-      <div class="bg-white shadow rounded">
-        <img class="img-fluid rounded-top" src="${character.image}">
+      <div class="bg-white shadow rounded" onclick="guess('${character.name}')">
+        <img class="img-fluid rounded-top character-image" src="${character.image}">
         <div class="p-2 text-center">
-          <h3>${character.name} | ${character.guilty ? 'GUILTY!!!' : ''}</h3>
+          <h3>${character.name} </h3>
         </div>
       </div>
     </div>
@@ -26,22 +25,67 @@ function draw(arr) {
   document.getElementById('cards').innerHTML = template
 }
 
-function newGame(arr) {
+function newGame() {
+  // NOTE reset all
   // for (let i = 0; i < arr.length; i++) {
   //   const character = arr[i]
   //   character.guilty = false
   // }
-  // NOTE reset all
-  arr.forEach(character => character.guilty = false)
+  villians.forEach(character => character.guilty = false)
   // NOTE pick random character from array
   // Math.random returns a number between 0-1 
-  const randIndex = Math.floor(Math.random() * arr.length)
-  arr[randIndex].guilty = true
+  const randIndex = Math.floor(Math.random() * villians.length)
+  villians[randIndex].guilty = true
+  current = villians
+  draw()
+}
+
+
+function filterFacialHair() {
+  // let facialHairedVillans = []
+  // for (let i = 0; i < villians.length; i++) {
+  //   const villian = villians[i]
+  //   if (villian.facialHair) {
+  //     facialHairedVillans.push(villian)
+  //   }
+  // }
+  current = current.filter(villian => villian.facialHair)
+  draw()
+}
+
+function filter(filteredProperty) { // 'gender'
+  // find the guilty character
+  // let guiltyParty = {}
+  // for (let i = 0; i < villians.length; i++) {
+  //   const villian = villians[i]
+  //   if (villian.guilty) {
+  //     guiltyParty = villian
+  //     break
+  //   }
+  // }
+  let guiltyParty = villians.find(villian => villian.guilty) // { name: 'jafar', gender: 'M', ...... }
+
+  // remove all characters who do not have the same value for that property
+  current = current.filter(villian => villian[filteredProperty] === guiltyParty[filteredProperty])
+  draw()
+}
+
+
+function guess(name) {
+  let guiltyParty = villians.find(villian => villian.guilty)
+  if (guiltyParty.name == name) {
+    alert('YOU WIN!')
+  }
+  else {
+    alert('WRONG!!!! YOU STINK')
+  }
 }
 
 
 
-newGame(villians)
-draw(villians)
+
+newGame()
+
+
 
 
